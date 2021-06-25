@@ -1,4 +1,5 @@
 import 'package:how_vi/banco_de_dados/bd.dart';
+import 'package:how_vi/interface/novo_pedido_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'dart:ui';
@@ -9,25 +10,25 @@ import 'novo_cliente_page.dart';
 enum OrdemOptions { ordemAZ, ordemZA }
 
 
-class ClientesPage extends StatefulWidget {
+class PedidosPage extends StatefulWidget {
 
 
   @override
-  _ClientesPageState createState() => _ClientesPageState();
+  _PedidosPageState createState() => _PedidosPageState();
 }
-// Página de listagem de Clientes
-class _ClientesPageState extends State<ClientesPage> {
 
-  ListaClientes clientes = ListaClientes();
+class _PedidosPageState extends State<PedidosPage> {
+
+  ListaPedidos pedidos = ListaPedidos();
 
   // ignore: deprecated_member_use
-  List<Cliente> clienteList = List();
+  List<Pedido> pedidoList = List();
 
   @override
   void initState() {
     super.initState();
 
-    _getAllClientes();
+    _getAllPedidos();
   }
 
 // Gerando tela
@@ -35,7 +36,7 @@ class _ClientesPageState extends State<ClientesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Clientes"),
+        title: Text("Pedidos"),
         backgroundColor: Colors.red,
         centerTitle: true,
         actions: <Widget>[
@@ -58,7 +59,7 @@ class _ClientesPageState extends State<ClientesPage> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showClientesPage();
+          _showPedidosPage();
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.red,
@@ -66,9 +67,9 @@ class _ClientesPageState extends State<ClientesPage> {
       body:
       ListView.builder(
           padding: EdgeInsets.all(10.0),
-          itemCount: clienteList.length,
+          itemCount: pedidoList.length,
           itemBuilder: (context, index) {
-            return _clienteCard(context, index);
+            return _pedidoCard(context, index);
           }
       ),
 
@@ -76,41 +77,25 @@ class _ClientesPageState extends State<ClientesPage> {
   }
 
 // Criacao do card
-  Widget _clienteCard(BuildContext context, int index) {
+  Widget _pedidoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
           child: Row(
             children: <Widget>[
-              Container(
-                width: 80.0,
-                height: 80.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: clienteList[index].img != null ?
-                      FileImage(File(clienteList[index].img)) :
-                      AssetImage("images/perfilPng.png"),
-                      fit: BoxFit.cover
-                  ),
-                ),
-              ),
               Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(clienteList[index].nome ?? "",
+                    Text(pedidoList[index].produto ?? "",
                       style: TextStyle(fontSize: 22.0,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(clienteList[index].email ?? "",
+                    Text(pedidoList[index].quantidade ?? "",
                       style: TextStyle(fontSize: 18.0),
                     ),
-                    Text(clienteList[index].telefone ?? "",
-                      style: TextStyle(fontSize: 18.0),
-                    )
                   ],
                 ),
               )
@@ -141,24 +126,12 @@ class _ClientesPageState extends State<ClientesPage> {
                     Padding(
                       padding: EdgeInsets.all(10.0),
                       child: TextButton(
-                        child: Text("Ligar",
-                          style: TextStyle(color: Colors.red, fontSize: 20.0),
-                        ),
-                        onPressed: () {
-                          launch("tel:${clienteList[index].telefone}");
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: TextButton(
                         child: Text("Editar",
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
                           Navigator.pop(context);
-                          _showClientesPage(cliente: clienteList[index]);
+                          _showPedidosPage(pedido: pedidoList[index]);
                         },
                       ),
                     ),
@@ -169,9 +142,9 @@ class _ClientesPageState extends State<ClientesPage> {
                           style: TextStyle(color: Colors.red, fontSize: 20.0),
                         ),
                         onPressed: () {
-                          clientes.deleteCliente(clienteList[index].id);
+                          pedidos.deletePedido(pedidoList[index].id);
                           setState(() {
-                            clienteList.removeAt(index);
+                            pedidoList.removeAt(index);
                             Navigator.pop(context);
                           });
                         },
@@ -187,39 +160,39 @@ class _ClientesPageState extends State<ClientesPage> {
   }
 
 // exibicao do conteúdo
-  void _showClientesPage({Cliente cliente}) async {
-    final recCliente = await Navigator.push(context,
-        MaterialPageRoute(builder: (context) => NovoClientePage(cliente: cliente,))
+  void _showPedidosPage({Pedido pedido}) async {
+    final recPedido = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => NovoPedidoPage(pedido: pedido,))
     );
-    if (recCliente != null) {
-      if (cliente != null) {
-        await clientes.updateCliente(recCliente);
-        _getAllClientes();
+    if (recPedido != null) {
+      if (pedido != null) {
+        await pedidos.updatePedido(recPedido);
+        _getAllPedidos();
       } else {
-        await clientes.saveCliente(recCliente);
+        await pedidos.savePedido(recPedido);
       }
-      _getAllClientes();
+      _getAllPedidos();
     }
   }
-// captura de todos os clientes
-  void _getAllClientes() {
-    clientes.getAllClientes().then((list) {
+// captura de todos os Pedidos
+  void _getAllPedidos() {
+    pedidos.getAllPedido().then((list) {
       setState(() {
-        clienteList = list;
+        pedidoList = list;
       });
     });
   }
-// funcao de ordenacao da lista de clientes
+// funcao de ordenacao da lista de Pedidos
   void _ordemLista(OrdemOptions result) {
     switch (result) {
       case OrdemOptions.ordemAZ:
-        clienteList.sort((a, b) {
-          return a.nome.toLowerCase().compareTo(b.nome.toLowerCase());
+        pedidoList.sort((a, b) {
+          return a.produto.toLowerCase().compareTo(b.produto.toLowerCase());
         });
         break;
       case OrdemOptions.ordemZA:
-        clienteList.sort((a, b) {
-          return b.nome.toLowerCase().compareTo(a.nome.toLowerCase());
+        pedidoList.sort((a, b) {
+          return b.produto.toLowerCase().compareTo(a.produto.toLowerCase());
         });
         break;
     }

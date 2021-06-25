@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:how_vi/banco_de_dados/bd.dart';
 import 'package:image_picker/image_picker.dart';
-
+// Tela de novo cliente
 class NovoClientePage extends StatefulWidget {
 
 
@@ -49,7 +49,7 @@ class _ClientePage extends State<NovoClientePage> {
 
 
 
-
+// Build da tela
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -140,8 +140,7 @@ class _ClientePage extends State<NovoClientePage> {
 
 
 
-
-
+//Pergunta ao solicitar sair sem salvar
   Future<bool> _requestPop(){
     if(_userEditar){
       showDialog(context: context,
