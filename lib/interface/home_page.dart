@@ -2,6 +2,7 @@
 import 'package:how_vi/interface/clientes_page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:how_vi/interface/pedidos_page.dart';
 import 'package:how_vi/interface/produtos_page.dart';
 
 
@@ -18,11 +19,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
 
+  PageController _pageController;
+  int _page = 0;
 
 
+  @override
+  void initState() {
+    super.initState();
+
+    _pageController = PageController();
+  }
 
 
+  @override
+  void dispose() {
+    _pageController.dispose();
 
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +50,9 @@ class _HomePageState extends State<HomePage> {
 
         ),
         child: BottomNavigationBar(
+          currentIndex: _page,
           onTap: (p){
-
+            _pageController.animateToPage(p, duration: Duration(milliseconds: 500), curve: Curves.ease);
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.person),
@@ -54,9 +69,15 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: PageView(
+        controller: _pageController,
+        onPageChanged: (p){
+          setState(() {
+            _page = p;
+          });
+        },
         children: <Widget>[
           ClientesPage(),
-          Container(color: Colors.red,),
+          PedidosPage(),
           ProdutosPage()
         ],
       ),

@@ -19,7 +19,7 @@ final String idProduto = "idProduto";
 final String nomeProduto = "nomeProduto";
 final String categoriaProduto = "categoriaProduto";
 final String valorProduto = "valorProduto";
-final quantidadeProduto = "quantidadeProduto";
+final String quantidadeProduto = "quantidadeProduto";
 final String imgProduto = "imgProduto";
 
 class ListaClientes {
@@ -363,8 +363,8 @@ class Produto {
   int id;
   String nome;
   String categoria;
-  double valor;
-  int quantidade;
+  String valor;
+  String quantidade;
   String img;
 
   Produto();

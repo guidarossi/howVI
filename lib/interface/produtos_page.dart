@@ -1,5 +1,4 @@
 import 'package:how_vi/banco_de_dados/bd.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -120,13 +119,13 @@ class _ProdutosPageState extends State<ProdutosPage> {
                       style: TextStyle(fontSize: 22.0,
                           fontWeight: FontWeight.bold),
                     ),
-                    Text(produtoList[index].categoria ?? "",
+                    Text('Categoria:  ${produtoList[index].categoria}' ?? "",
                       style: TextStyle(fontSize: 18.0),
                     ),
-                    Text(produtoList[index].valor ?? "",
+                    Text('Valor: R\$\ ${produtoList[index].valor}' ?? "",
                       style: TextStyle(fontSize: 18.0),
                     ),
-                    Text(produtoList[index].quantidade ?? "",
+                    Text('Qnt estoque: ${produtoList[index].quantidade}' ?? "",
                       style: TextStyle(fontSize: 18.0),
                     )
                   ],

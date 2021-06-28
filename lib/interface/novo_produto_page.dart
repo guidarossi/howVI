@@ -41,8 +41,8 @@ class _NovoProdutoPage extends State<NovoProdutoPage> {
 
       _nomeController.text = _editarProduto.nome;
       _categoriaController.text = _editarProduto.categoria;
-      _valorController.text = _editarProduto.valor as String;
-      _quantidadeController.text = _editarProduto.quantidade as String;
+      _valorController.text = _editarProduto.valor;
+      _quantidadeController.text = _editarProduto.quantidade;
     }
   }
 
@@ -121,7 +121,7 @@ class _NovoProdutoPage extends State<NovoProdutoPage> {
                 decoration: InputDecoration(labelText: "Valor"),
                 onChanged: (text){
                   _produtoEditar = true;
-                  _editarProduto.valor = text as double;
+                  _editarProduto.valor = text;
                 },
                 keyboardType: TextInputType.number,
               ),
@@ -130,7 +130,7 @@ class _NovoProdutoPage extends State<NovoProdutoPage> {
                 decoration: InputDecoration(labelText: "Quantidade"),
                 onChanged: (text){
                   _produtoEditar = true;
-                  _editarProduto.quantidade = text as int;
+                  _editarProduto.quantidade = text;
                 },
                 keyboardType: TextInputType.number,
               ),
