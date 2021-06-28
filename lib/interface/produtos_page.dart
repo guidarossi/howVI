@@ -15,7 +15,7 @@ class ProdutosPage extends StatefulWidget {
   @override
   _ProdutosPageState createState() => _ProdutosPageState();
 }
-// Página de listagem de Produtos
+
 class _ProdutosPageState extends State<ProdutosPage> {
 
 
@@ -30,7 +30,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
 
     _getAllProdutos();
   }
-// Gerando tela
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +90,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
 
 
 
-// Criacao do card
+
   Widget _produtoCard(BuildContext context, int index) {
     return GestureDetector(
       child: Card(
@@ -142,7 +142,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
     );
   }
 
-// Opcoes ao clicar no botao
+
   void _showOpcoes(BuildContext context, int index) {
     showModalBottomSheet(
         context: context,
@@ -203,7 +203,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
     );
   }
 
-// exibicao do conteúdo
+
   void _showProdutosPage({Produto produto}) async {
     final recProduto = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => NovoProdutoPage(produto: produto,))
@@ -218,7 +218,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
       _getAllProdutos();
     }
   }
-// captura de todos os produtos
+
   void _getAllProdutos() {
     produtos.getAllProduto().then((list) {
       setState(() {
@@ -226,7 +226,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
       });
     });
   }
-// funcao de ordenacao da lista de produtos
+
   void _ordemLista(OrdemOptions result) {
     switch (result) {
       case OrdemOptions.ordemAZ:

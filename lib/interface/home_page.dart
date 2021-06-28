@@ -2,7 +2,6 @@
 import 'package:how_vi/interface/clientes_page.dart';
 
 import 'package:flutter/material.dart';
-import 'package:how_vi/interface/pedidos_page.dart';
 import 'package:how_vi/interface/produtos_page.dart';
 
 
@@ -15,7 +14,7 @@ class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
-// Tela Inicial do sistema
+
 class _HomePageState extends State<HomePage> {
 
 
@@ -24,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
 
 
-// Build do app
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +56,7 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         children: <Widget>[
           ClientesPage(),
-          PedidosPage(),
+          Container(color: Colors.red,),
           ProdutosPage()
         ],
       ),

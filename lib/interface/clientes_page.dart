@@ -189,7 +189,8 @@ class _ClientesPageState extends State<ClientesPage> {
 // exibicao do conteúdo
   void _showClientesPage({Cliente cliente}) async {
     final recCliente = await Navigator.push(context,
-        MaterialPageRoute(builder: (context) => NovoClientePage(cliente: cliente,))
+        MaterialPageRoute(builder: (context) => NovoClientePage(
+                  cliente: cliente,))
     );
     if (recCliente != null) {
       if (cliente != null) {

@@ -23,7 +23,6 @@ final quantidadeProduto = "quantidadeProduto";
 final String imgProduto = "imgProduto";
 
 class ListaClientes {
-
   static final ListaClientes _instance = ListaClientes.interno();
 
   factory ListaClientes() => _instance;
@@ -45,12 +44,11 @@ class ListaClientes {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, "clientes.db");
 
-    return await openDatabase(
-        path, version: 1, onCreate: (Database db, int newerVersion) async {
+    return await openDatabase(path, version: 1,
+        onCreate: (Database db, int newerVersion) async {
       await db.execute(
           "CREATE TABLE $tabelaClientes($idColumn INTEGER PRIMARY KEY, $nomeColumn TEXT, $emailColumn TEXT,"
-              "$telefoneColumn TEXT, $imgColumn TEXT)"
-      );
+          "$telefoneColumn TEXT, $imgColumn TEXT)");
     });
   }
 
@@ -63,57 +61,55 @@ class ListaClientes {
   // ignore: missing_return
   Future<Cliente> getCliente(int id) async {
     Database dbCliente = await db;
-    List<Map> maps = await dbCliente.query(tabelaClientes, //query me permite pegar apenas os dados que eu quiser
+    List<Map> maps = await dbCliente.query(
+        tabelaClientes, //query me permite pegar apenas os dados que eu quiser
         columns: [idColumn, nomeColumn, emailColumn, telefoneColumn, imgColumn],
         where: "$id = ?",
-        whereArgs: [id] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
-    );
-    if(maps.length > 0){
+        whereArgs: [
+          id
+        ] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
+        );
+    if (maps.length > 0) {
       return Cliente.fromMap(maps.first);
       // ignore: unnecessary_statements
     } else null;
-
   }
 
-  Future<int> deleteCliente(int id) async{
-
+  Future<int> deleteCliente(int id) async {
     Database dbCliente = await db;
     return await dbCliente.delete(tabelaClientes, where: "$idColumn = ?", whereArgs: [id]);
   }
 
-  Future<int> updateCliente(Cliente cliente) async{
+  Future<int> updateCliente(Cliente cliente) async {
     Database dbCliente = await db;
-    return await dbCliente.update(tabelaClientes,
-        cliente.toMap(),
-        where: "$idColumn = ?",
-        whereArgs: [cliente.id]);
+    return await dbCliente.update(tabelaClientes, cliente.toMap(),
+        where: "$idColumn = ?", whereArgs: [cliente.id]);
   }
 
-  Future<List> getAllClientes() async{
+  Future<List> getAllClientes() async {
     Database dbCliente = await db;
     List listMap = await dbCliente.rawQuery("SELECT * FROM $tabelaClientes");
     // ignore: deprecated_member_use
     List<Cliente> listCliente = List();
-    for(Map m in listMap){
+    for (Map m in listMap) {
       listCliente.add(Cliente.fromMap(m));
     }
     return listCliente;
   }
 
-  Future<int> getNum() async{
+  Future<int> getNum() async {
     Database dbCliente = await db;
-    return Sqflite.firstIntValue(await dbCliente.rawQuery("SELECT COUNT(*) FROM $tabelaClientes"));
+    return Sqflite.firstIntValue(
+        await dbCliente.rawQuery("SELECT COUNT(*) FROM $tabelaClientes"));
   }
 
   Future close() async {
     Database dbCliente = await db;
     dbCliente.close();
   }
-
 }
 
 class Cliente {
-
   int id;
   String nome;
   String email;
@@ -122,7 +118,7 @@ class Cliente {
 
   Cliente();
 
-  Cliente.fromMap(Map map){
+  Cliente.fromMap(Map map) {
     id = map[idColumn];
     nome = map[nomeColumn];
     email = map[emailColumn];
@@ -138,7 +134,7 @@ class Cliente {
       imgColumn: img
     };
 
-    if(id != null){
+    if (id != null) {
       map[idColumn] = id;
     }
     return map;
@@ -269,7 +265,6 @@ class Pedido {
 
 
 class ListaProdutos {
-
   static final ListaProdutos _instance = ListaProdutos.interno();
 
   factory ListaProdutos() => _instance;
@@ -291,12 +286,11 @@ class ListaProdutos {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, "produtos.db");
 
-    return await openDatabase(
-        path, version: 2, onCreate: (Database db, int newerVersion) async {
+    return await openDatabase(path, version: 2,
+        onCreate: (Database db, int newerVersion) async {
       await db.execute(
           "CREATE TABLE $tabelaProdutos($idProduto INTEGER PRIMARY KEY, $nomeProduto TEXT, $categoriaProduto TEXT,"
-              "$valorProduto TEXT, $quantidadeProduto TEXT ,$imgColumn TEXT)"
-      );
+          "$valorProduto TEXT, $quantidadeProduto TEXT ,$imgColumn TEXT)");
     });
   }
 
@@ -309,57 +303,63 @@ class ListaProdutos {
   // ignore: missing_return
   Future<Produto> getProduto(int id) async {
     Database dbProduto = await db;
-    List<Map> maps = await dbProduto.query(tabelaProdutos, //query me permite pegar apenas os dados que eu quiser
-        columns: [idProduto, nomeProduto, categoriaProduto, valorProduto, quantidadeProduto ,imgColumn],
+    List<Map> maps = await dbProduto.query(
+        tabelaProdutos, //query me permite pegar apenas os dados que eu quiser
+        columns: [
+          idProduto,
+          nomeProduto,
+          categoriaProduto,
+          valorProduto,
+          quantidadeProduto,
+          imgColumn
+        ],
         where: "$id = ?",
-        whereArgs: [id] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
-    );
-    if(maps.length > 0){
+        whereArgs: [
+          id
+        ] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
+        );
+    if (maps.length > 0) {
       return Produto.fromMap(maps.first);
       // ignore: unnecessary_statements
     } else null;
-
   }
 
-  Future<int> deleteProduto(int id) async{
-
+  Future<int> deleteProduto(int id) async {
     Database dbProduto = await db;
-    return await dbProduto.delete(tabelaProdutos, where: "$idProduto = ?", whereArgs: [id]);
+    return await dbProduto
+        .delete(tabelaProdutos, where: "$idProduto = ?", whereArgs: [id]);
   }
 
-  Future<int> updateProduto(Produto produto) async{
+  Future<int> updateProduto(Produto produto) async {
     Database dbProduto = await db;
-    return await dbProduto.update(tabelaProdutos,
-        produto.toMap(),
-        where: "$idProduto = ?",
-        whereArgs: [produto.id]);
+    return await dbProduto.update(tabelaProdutos, produto.toMap(),
+        where: "$idProduto = ?", whereArgs: [produto.id]);
   }
 
-  Future<List> getAllProduto() async{
+  Future<List> getAllProduto() async {
     Database dbProduto = await db;
     List listMap = await dbProduto.rawQuery("SELECT * FROM $tabelaProdutos");
     // ignore: deprecated_member_use
     List<Produto> listProduto = List();
-    for(Map m in listMap){
+    for (Map m in listMap) {
       listProduto.add(Produto.fromMap(m));
     }
     return listProduto;
   }
 
-  Future<int> getNumP() async{
+  Future<int> getNumP() async {
     Database dbProduto = await db;
-    return Sqflite.firstIntValue(await dbProduto.rawQuery("SELECT COUNT(*) FROM $tabelaProdutos"));
+    return Sqflite.firstIntValue(
+        await dbProduto.rawQuery("SELECT COUNT(*) FROM $tabelaProdutos"));
   }
 
   Future close() async {
     Database dbProduto = await db;
     dbProduto.close();
   }
-
 }
 
 class Produto {
-
   int id;
   String nome;
   String categoria;
@@ -369,7 +369,7 @@ class Produto {
 
   Produto();
 
-  Produto.fromMap(Map map){
+  Produto.fromMap(Map map) {
     id = map[idProduto];
     nome = map[nomeProduto];
     categoria = map[categoriaProduto];
@@ -392,6 +392,4 @@ class Produto {
     }
     return map;
   }
-
-
 }
