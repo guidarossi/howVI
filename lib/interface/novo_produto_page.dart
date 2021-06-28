@@ -5,7 +5,7 @@ import 'package:how_vi/banco_de_dados/bd.dart';
 import 'package:image_picker/image_picker.dart';
 
 
-
+// Tela de novo Produto
 class NovoProdutoPage extends StatefulWidget {
 
   final Produto produto;
@@ -46,7 +46,7 @@ class _NovoProdutoPage extends State<NovoProdutoPage> {
     }
   }
 
-
+// Build da tela
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -142,8 +142,8 @@ class _NovoProdutoPage extends State<NovoProdutoPage> {
   }
 
 
-
-  Future<bool> _requestPop(){
+//Pergunta ao solicitar sair sem salvar
+Future<bool> _requestPop(){
     if(_produtoEditar){
       showDialog(context: context,
           builder: (context){

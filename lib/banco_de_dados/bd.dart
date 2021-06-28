@@ -9,6 +9,11 @@ final String emailColumn = "emailColumn";
 final String telefoneColumn = "telefoneColumn";
 final String imgColumn = "imgColumn";
 
+final String tabelaPedidos = "tabelaPedidos";
+final String quantidadeColumn = "quantidade";
+final String produtoColumn = "produto";
+final String idPedido = "idPedido";
+
 final String tabelaProdutos = "tabelaProdutos";
 final String idProduto = "idProduto";
 final String nomeProduto = "nomeProduto";
@@ -145,6 +150,122 @@ class Cliente {
   }
 }
 
+class ListaPedidos {
+
+  static final ListaPedidos _instance = ListaPedidos.interno();
+
+  factory ListaPedidos() => _instance;
+
+  ListaPedidos.interno();
+
+  Database _db;
+
+  Future<Database> get db async {
+    if (_db != null) {
+      return _db;
+    } else {
+      _db = await initDb();
+      return _db;
+    }
+  }
+
+  Future<Database> initDb() async {
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, "pedidos.db");
+
+    return await openDatabase(
+        path, version: 2, onCreate: (Database db, int newerVersion) async {
+      await db.execute(
+          "CREATE TABLE $tabelaPedidos($idPedido INTEGER PRIMARY KEY, $produtoColumn TEXT, $quantidadeColumn TEXT )"
+      );
+    });
+  }
+
+  Future<Pedido> savePedido(Pedido pedido) async {
+    Database dbPedido = await db;
+    pedido.id = await dbPedido.insert(tabelaPedidos, pedido.toMap());
+    return pedido;
+  }
+
+  // ignore: missing_return
+  Future<Pedido> getPedido(int id) async {
+    Database dbPedido = await db;
+    List<Map> maps = await dbPedido.query(tabelaPedidos, //query me permite pegar apenas os dados que eu quiser
+        columns: [idPedido, produtoColumn, quantidadeColumn],
+        where: "$id = ?",
+        whereArgs: [id] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
+    );
+    if(maps.length > 0){
+      return Pedido.fromMap(maps.first);
+      // ignore: unnecessary_statements
+    } else null;
+
+  }
+
+  Future<int> deletePedido(int id) async{
+
+    Database dbPedido = await db;
+    return await dbPedido.delete(tabelaPedidos, where: "$idPedido = ?", whereArgs: [id]);
+  }
+
+  Future<int> updatePedido(Pedido pedido) async{
+    Database dbPedido = await db;
+    return await dbPedido.update(tabelaPedidos,
+        pedido.toMap(),
+        where: "$idPedido = ?",
+        whereArgs: [pedido.id]);
+  }
+
+  Future<List> getAllPedido() async{
+    Database dbPedido = await db;
+    List listMap = await dbPedido.rawQuery("SELECT * FROM $tabelaPedidos");
+    // ignore: deprecated_member_use
+    List<Pedido> listPedido = List();
+    for(Map m in listMap){
+      listPedido.add(Pedido.fromMap(m));
+    }
+    return listPedido;
+  }
+
+  Future<int> getNumP() async{
+    Database dbPedido = await db;
+    return Sqflite.firstIntValue(await dbPedido.rawQuery("SELECT COUNT(*) FROM $tabelaPedidos"));
+  }
+
+  Future close() async {
+    Database dbPedido = await db;
+    dbPedido.close();
+  }
+
+}
+
+
+class Pedido {
+
+  int id;
+  String quantidade;
+  String produto;
+
+  Pedido();
+
+  Pedido.fromMap(Map map){
+    id = map[idColumn];
+    quantidade = map[quantidadeColumn];
+    produto = map[produtoColumn];
+  }
+
+  Map toMap() {
+    Map<String, dynamic> map = {
+      quantidadeColumn: quantidade,
+      produtoColumn: produto,
+    };
+
+    if(id != null){
+      map[idColumn] = id;
+    }
+    return map;
+  }
+}
 
 
 class ListaProdutos {
