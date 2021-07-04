@@ -144,6 +144,7 @@ class ListaClientes {
 
     for (Map m in listMap) {
       listCliente.add(Cliente.fromMap(m));
+      //ListCliente.add(Cliente(id:m["id"],nome:m["name"]));
     }
     return listCliente;
   }

@@ -1,3 +1,4 @@
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'banco_de_dados/bd.dart';
@@ -32,19 +33,22 @@ class _BackendServiceState extends State<BackendService> {
     await Future.delayed(Duration(seconds: 1));
     List<String> matches = <String>[];
 
-    return List.generate(10, (index) {
+    return List.generate(matches.toString().length, (index) {
     //print(clienteList[index].nome.toString());
       return {
-        //matches.toString():clienteList.toString()
+        matches.toString():clienteList.first.nome
         //"nome":clienteList[index].nome.toString()
-        "nome":"tati"
+        //"nome":"tati"
       };
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return
+
+    return Scaffold(
+      body: Column(
+        children:[
       TypeAheadField(
         textFieldConfiguration: TextFieldConfiguration(
             autofocus: true,
@@ -63,8 +67,6 @@ class _BackendServiceState extends State<BackendService> {
           return getSuggestions();
         },
         itemBuilder: (context, suggestion) {
-          print("itemBuilder ");
-          print(suggestion);
           return ListTile(
             title: Text(suggestion.toString()),
 
@@ -73,10 +75,87 @@ class _BackendServiceState extends State<BackendService> {
         onSuggestionSelected: (suggestion) {
           clienteList = suggestion;
         },
-      );
+      ),
+
+    Column(
+
+    children: [
+    new ListTile(
+    title: textField,
+    trailing: new IconButton(
+    icon: new Icon(Icons.add),
+    onPressed: () {
+    textField.triggerSubmitted();
+    showWhichErrorText = !showWhichErrorText;
+    textField.updateDecoration(
+    decoration: new InputDecoration(
+    errorText: showWhichErrorText
+    ? "Beans"
+        : "Tomatoes"));
+    })),
+    ])
+
+
+
+
+
+
+  ]
+      )
+    );
   }
 
+  List<String> added = [];
+  String currentText = "";
+
+  SimpleAutoCompleteTextField textField;
+  bool showWhichErrorText = false;
+
+
+
+    Widget newColumn() {
+
+
+
+      return new Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: new AppBar(
+            title: new Text('AutoComplete TextField Demo Simple'),
+            actions: [
+              new IconButton(
+                  icon: new Icon(Icons.edit),
+                  onPressed: () => showDialog(
+                      builder: (_) {
+                        String text = "";
+
+                        return new AlertDialog(
+                            title: new Text("Change Suggestions"),
+                            content: new TextField(
+                                onChanged: (newText) => text = newText),
+                            actions: [
+                              new TextButton(
+                                  onPressed: () {
+                                    if (text != "") {
+                                      suggestions.add(text);
+                                      textField.updateSuggestions(suggestions);
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  child: new Text("Add")),
+                            ]);
+                      },
+                      context: context))
+            ]),
+
+      );
+    }
+List<String> suggestions = [];
+
+
 }
+
+
+
 
 
 class CitiesService {

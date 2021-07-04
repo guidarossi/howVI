@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:how_vi/banco_de_dados/bd.dart';
-import 'package:how_vi/historic.dart';
 import '../historic.dart';
 
 
@@ -77,7 +75,7 @@ class _PedidoPage extends State<NovoPedidoPage> {
           child: Icon(Icons.save),
           backgroundColor: Colors.red,
         ),
-        body:BackendService()
+        body: BackendService()
       ),
     );
   }
