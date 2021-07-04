@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:how_vi/banco_de_dados/bd.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
+
 
 class NovoClientePage extends StatefulWidget {
 
@@ -31,6 +36,12 @@ class _ClientePage extends State<NovoClientePage> {
   @override
   void initState() {
     super.initState();
+
+    readData().then((value) => (data){
+      setState(() {
+        toDoList = json.decode(data);
+      });
+    });
 
     if (widget.cliente == null) {
       _editarCliente = Cliente();
@@ -62,6 +73,10 @@ class _ClientePage extends State<NovoClientePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: (){
+            _addToName();
+            saveData();
+            print("PRINT $toDoList");
+
             if(_editarCliente.nome != null && _editarCliente.nome.isNotEmpty){
               Navigator.pop(context, _editarCliente); // POP volta para a tela anterior
             } else {
@@ -173,4 +188,86 @@ class _ClientePage extends State<NovoClientePage> {
     }
   }
 
+
+
+  List toDoList = [];
+
+  void _addToName(){
+    setState(() {
+      Map<String, dynamic> newName = Map();
+      newName["Nome"] = _nomeController.text;
+      _nomeController.text = '';
+      newName["Email"] = _emailController.text;
+      _emailController.text = '';
+      newName["Phone"] = _telefoneController.text;
+      _telefoneController.text = '';
+      toDoList.add(newName);
+      saveData();
+    });
+  }
+
+
+
+  Future<File> getFile() async{
+    final directory = await getApplicationDocumentsDirectory();
+    return File("${directory.path}/clientes.json");
+  }
+
+  Future<File> saveData() async {
+    String data = json.encode(toDoList);
+    final file = await getFile();
+    return file.writeAsString(data);
+  }
+
+  Future<String> readData() async{
+    try{
+      final file = await getFile();
+      return file.readAsString();
+    }catch (e){
+      return null;
+    }
+  }
+
+
 }
+
+
+class ClientesName {
+  int id;
+  String name;
+
+  ClientesName({this.id, this.name});
+
+  ClientesName.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    return data;
+  }
+}
+
+class ClientesViewModel {
+
+  static List<ClientesName> clientes;
+
+  static Future loadClientes() async {
+    try {
+      // ignore: deprecated_member_use
+      clientes = new List<ClientesName>();
+      String jsonString = await rootBundle.loadString("assets/clientes.json");
+      Map parsedJson = json.decode(jsonString);
+      var categoryJson = parsedJson['name'] as List;
+      for (int i = 0; i < categoryJson.length; i++) {
+        clientes.add(new ClientesName.fromJson(categoryJson[i]));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+}
+

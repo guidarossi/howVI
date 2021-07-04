@@ -1,6 +1,9 @@
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:async';
+
+
 
 final String tabelaClientes = "tabelaClientes";
 final String idColumn = "idColumn";
@@ -10,6 +13,7 @@ final String telefoneColumn = "telefoneColumn";
 final String imgColumn = "imgColumn";
 
 final String tabelaPedidos = "tabelaPedidos";
+final String clienteColumn = "nomeCliente";
 final String quantidadeColumn = "quantidade";
 final String produtoColumn = "produto";
 final String idPedido = "idPedido";
@@ -22,7 +26,10 @@ final String valorProduto = "valorProduto";
 final String quantidadeProduto = "quantidadeProduto";
 final String imgProduto = "imgProduto";
 
+
 class ListaClientes {
+
+
   static final ListaClientes _instance = ListaClientes.interno();
 
   factory ListaClientes() => _instance;
@@ -46,11 +53,39 @@ class ListaClientes {
 
     return await openDatabase(path, version: 1,
         onCreate: (Database db, int newerVersion) async {
-      await db.execute(
-          "CREATE TABLE $tabelaClientes($idColumn INTEGER PRIMARY KEY, $nomeColumn TEXT, $emailColumn TEXT,"
-          "$telefoneColumn TEXT, $imgColumn TEXT)");
-    });
+          await db.execute(
+              "CREATE TABLE $tabelaClientes($idColumn INTEGER PRIMARY KEY, $nomeColumn TEXT, $emailColumn TEXT,"
+                  "$telefoneColumn TEXT, $imgColumn TEXT)");
+        });
   }
+
+  Future<List<String>> getClientes() async {
+    Database dbCliente = await db;
+
+    final getClientes = await dbCliente.query("$tabelaClientes");
+
+    return getClientes.map((Map<String, dynamic> row) {
+      return row["$nomeColumn"] as String;
+    }).toList();
+  }
+
+// ignore: missing_return
+  Future<String> getCliente2() async {
+    Database dbCliente = await db;
+    List<Map> maps = await dbCliente.query(
+        tabelaClientes, //query me permite pegar apenas os dados que eu quiser
+        columns: [nomeColumn],
+        where: "$nomeColumn = ?",
+        whereArgs: [
+
+        ] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
+    );
+    if (maps.length != null) {
+      return Cliente().nome;
+      // ignore: unnecessary_statements
+    } else null;
+  }
+
 
   Future<Cliente> saveCliente(Cliente cliente) async {
     Database dbCliente = await db;
@@ -68,7 +103,7 @@ class ListaClientes {
         whereArgs: [
           id
         ] //obter o contato onde traga apenas o contato id da coluna que id que foi chamada
-        );
+    );
     if (maps.length > 0) {
       return Cliente.fromMap(maps.first);
       // ignore: unnecessary_statements
@@ -77,7 +112,8 @@ class ListaClientes {
 
   Future<int> deleteCliente(int id) async {
     Database dbCliente = await db;
-    return await dbCliente.delete(tabelaClientes, where: "$idColumn = ?", whereArgs: [id]);
+    return await dbCliente.delete(
+        tabelaClientes, where: "$idColumn = ?", whereArgs: [id]);
   }
 
   Future<int> updateCliente(Cliente cliente) async {
@@ -97,6 +133,21 @@ class ListaClientes {
     return listCliente;
   }
 
+  Future<List> getAllClientesNames(String query) async {
+    Database dbCliente = await db;
+
+      List listMap = await dbCliente.rawQuery(
+          "SELECT $idColumn, $nomeColumn FROM $tabelaClientes where $nomeColumn like '%"+query+"%' ");
+
+    // ignore: deprecated_member_use
+    List<Cliente> listCliente = List();
+
+    for (Map m in listMap) {
+      listCliente.add(Cliente.fromMap(m));
+    }
+    return listCliente;
+  }
+
   Future<int> getNum() async {
     Database dbCliente = await db;
     return Sqflite.firstIntValue(
@@ -107,8 +158,8 @@ class ListaClientes {
     Database dbCliente = await db;
     dbCliente.close();
   }
-}
 
+}
 class Cliente {
   int id;
   String nome;
@@ -117,6 +168,7 @@ class Cliente {
   String img;
 
   Cliente();
+
 
   Cliente.fromMap(Map map) {
     id = map[idColumn];
@@ -146,6 +198,7 @@ class Cliente {
   }
 }
 
+
 class ListaPedidos {
 
   static final ListaPedidos _instance = ListaPedidos.interno();
@@ -172,7 +225,7 @@ class ListaPedidos {
     return await openDatabase(
         path, version: 2, onCreate: (Database db, int newerVersion) async {
       await db.execute(
-          "CREATE TABLE $tabelaPedidos($idPedido INTEGER PRIMARY KEY, $produtoColumn TEXT, $quantidadeColumn TEXT )"
+          "CREATE TABLE $tabelaPedidos($idPedido INTEGER PRIMARY KEY, $clienteColumn TEXT, $produtoColumn TEXT, $quantidadeColumn TEXT )"
       );
     });
   }
@@ -233,12 +286,15 @@ class ListaPedidos {
     dbPedido.close();
   }
 
+
+
 }
 
 
 class Pedido {
 
   int id;
+  String nomeCliente;
   String quantidade;
   String produto;
 
@@ -246,6 +302,7 @@ class Pedido {
 
   Pedido.fromMap(Map map){
     id = map[idColumn];
+    nomeCliente = map[clienteColumn];
     quantidade = map[quantidadeColumn];
     produto = map[produtoColumn];
   }
@@ -254,6 +311,7 @@ class Pedido {
     Map<String, dynamic> map = {
       quantidadeColumn: quantidade,
       produtoColumn: produto,
+      clienteColumn: nomeCliente
     };
 
     if(id != null){
@@ -261,6 +319,7 @@ class Pedido {
     }
     return map;
   }
+
 }
 
 
@@ -357,6 +416,7 @@ class ListaProdutos {
     Database dbProduto = await db;
     dbProduto.close();
   }
+
 }
 
 class Produto {
@@ -393,3 +453,8 @@ class Produto {
     return map;
   }
 }
+
+
+
+
+

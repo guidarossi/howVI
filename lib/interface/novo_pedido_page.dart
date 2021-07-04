@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:how_vi/banco_de_dados/bd.dart';
+import 'package:how_vi/historic.dart';
+import '../historic.dart';
+
+
+
 
 // Tela de Pedidos
 class NovoPedidoPage extends StatefulWidget {
 
-
-
   final Pedido pedido;
+  final ListaClientes listaClientes;
 
-  NovoPedidoPage({this.pedido}); // entre {} contato opcional
+  NovoPedidoPage({this.pedido, this.listaClientes}); // entre {} contato opcional
 
   @override
   _PedidoPage createState() => _PedidoPage();
@@ -19,10 +24,14 @@ class _PedidoPage extends State<NovoPedidoPage> {
 
   final _nomeProdutoController = TextEditingController();
   final _quantidadeController = TextEditingController();
+  final _nomeClienteController = TextEditingController();
 
   final _nomeFocus = FocusNode();
 
   bool _userEditar = false;
+
+  List<String> itemsList;
+
 
   Pedido _editarPedido;
 
@@ -32,16 +41,16 @@ class _PedidoPage extends State<NovoPedidoPage> {
 
     if (widget.pedido == null) {
       _editarPedido = Pedido();
+
     } else {
       _editarPedido = Pedido.fromMap(widget.pedido.toMap());
 
+
+      _nomeClienteController.text = _editarPedido.nomeCliente;
       _nomeProdutoController.text = _editarPedido.produto;
       _quantidadeController.text = _editarPedido.quantidade;
     }
   }
-
-
-
 
 
 
@@ -54,7 +63,7 @@ class _PedidoPage extends State<NovoPedidoPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text(_editarPedido.produto ?? "Produto"),
+          title: Text(_editarPedido.produto ?? "Pedido"),
           centerTitle: true,
         ),
         floatingActionButton: FloatingActionButton(
@@ -68,35 +77,7 @@ class _PedidoPage extends State<NovoPedidoPage> {
           child: Icon(Icons.save),
           backgroundColor: Colors.red,
         ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            children: <Widget>[
-              TextField(
-                controller: _nomeProdutoController,
-                focusNode: _nomeFocus,
-                decoration: InputDecoration(labelText: "Produto"),
-                onChanged: (text){
-                  _userEditar = true;
-                  setState(() {
-                    _editarPedido.produto = text;
-                  });
-                },
-              ),
-              TextField(
-                controller: _quantidadeController,
-                decoration: InputDecoration(labelText: "Quantidade"),
-                onChanged: (text) {
-                  _userEditar = true;
-                  setState(() {
-                    _editarPedido.quantidade = text;
-                  });
-                },
-                //keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-        ),
+        body:BackendService()
       ),
     );
   }
@@ -138,4 +119,28 @@ class _PedidoPage extends State<NovoPedidoPage> {
     }
   }
 
+}
+
+class ProductPage extends StatelessWidget {
+  final Map<String, String> product;
+
+  ProductPage({this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(50.0),
+        child: Column(
+          children: [
+            Text(
+              this.product['name'],
+              style: Theme.of(context).textTheme.headline5,
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
 }
